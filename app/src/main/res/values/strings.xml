@@ -2,5 +2,10 @@
     <string name="app_name">SilectOScream</string>
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_help_request">HelpRequestActivity</string>
-    <string name="helpbuttontitle">Yardim</string>
+    <string name="helpbuttontitle">Help</string>
+    <string name="webserverurl">http://www.basicnotify.com/api/add-location</string>
+    <string name="helpText">In case emergency, please click on the ANKA button. \n\nClosest Anka Volunteer will reach you for help. </string>
+    <string name="layerText">Layer</string>
+    <string name="locText">My Location</string>
+    <string name="homeText">Home</string>
 </resources>

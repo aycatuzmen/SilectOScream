@@ -20,28 +20,23 @@ android:orientation="vertical">
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="showMyLocation"
-        android:text="Konumum"
+        android:text="@string/locText"
         />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="addBLLMarker"
-        android:text="BLL"/>
 
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="addLine"
-        android:text="Yol Çiz"/>
+        android:text="@string/homeText"/>
 
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="changeMapType"
-        android:text="Katman"/>
+        android:text="@string/layerText"/>
 
 
 </LinearLayout>

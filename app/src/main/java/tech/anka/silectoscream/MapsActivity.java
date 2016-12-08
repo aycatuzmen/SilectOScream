@@ -14,14 +14,28 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
@@ -30,6 +44,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Location currentLocation;
     Marker mMarker;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +52,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
 
 
 
@@ -73,7 +89,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     " Lon:" + currentLocation.getLongitude());
             if (mMap != null) {
                 LatLng position = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-                 mMarker = mMap.addMarker(new MarkerOptions().position(position).title("CurrentLocation"));
+                LatLng ankaposition = new LatLng(currentLocation.getLatitude()+0.0000001, currentLocation.getLongitude()+0.0000001);
+                mMarker = mMap.addMarker(new MarkerOptions().position(position).title("CurrentLocation"));
+                mMarker = mMap.addMarker(new MarkerOptions().position(ankaposition).title("ANKA").icon(BitmapDescriptorFactory.fromResource(R.drawable.rape)));
                 //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 16));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(position, 16));
                 //mMap.clear();
@@ -103,6 +121,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(position, 16));
                     //mMap.clear();
                     mMarker.showInfoWindow();
+                    sendLocationtoServer(currentLocation);
                 }
             }
 
@@ -141,7 +160,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.d("arg0", arg0.latitude + "-" + arg0.longitude);
             }
         });
-
+        //play dog whistle
+        callDog();
     }
 
     private void getLastPosition() {
@@ -164,16 +184,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    public void addBLLMarker(View view) {
-        if (mMap != null) {
-            LatLng position = new LatLng(41.095325, 28.803271);
-            Marker mMarker = mMap.addMarker(new MarkerOptions().position(position).title("BLL").snippet("Başakşehir Living Lab"));
-            //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 16));
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(position, 16));
-            //mMap.clear();
-            mMarker.showInfoWindow();
-        } else Toast.makeText(MapsActivity.this, "Harita henüz yüklenmedi", Toast.LENGTH_SHORT).show();
-    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -236,4 +247,60 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             : GoogleMap.MAP_TYPE_NORMAL );
         }
     }
+    private void sendLocationtoServer(Location location) {
+        String serverUrl = String.valueOf((R.string.webserverurl));
+        serverUrl = "http://www.basicnotify.com/api/add-location";
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+
+        Map<String, String> jsonParams = new HashMap<String, String>();
+        jsonParams.put("lat", String.valueOf(location.getLatitude()));
+        jsonParams.put("lng", String.valueOf(location.getLongitude()));
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                serverUrl,
+                new JSONObject(jsonParams),
+
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        String postresult;
+                        try {
+
+                            if (response.getBoolean("success")) {
+                                Log.i("Post result", "Post succesfully made");
+                            } else {
+                                Log.e("Error", "Error in server post");
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                return headers;
+            }
+        };
+
+
+        queue.add(jsonObjectRequest);
+    }
+    public void callDog (){
+
+    }
+
 }

@@ -13,11 +13,24 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="tech.anka.silectoscream.HelpRequestActivity"
     tools:showIn="@layout/activity_help_request">
-    <Button
+
+
+    <at.markushi.ui.CircleButton
+        android:id="@+id/helpButton"
+        android:layout_width="match_parent"
+        android:layout_height="200dip"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="8dip"
+        android:src="@drawable/ankatechlogo"
+        app:cb_color="#99CC00"
+        android:onClick="requestHelp"/>
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="@string/helpbuttontitle"
-        android:id="@+id/helpButton"
-        android:onClick="requestHelp"/>
+        android:text="@string/helpText"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textAlignment="center"
+        android:background="@android:color/background_light" />
 
 </LinearLayout>
